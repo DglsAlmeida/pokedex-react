@@ -8,7 +8,7 @@ const App = () => {
       <GlobalStyle />
       <Dashboard />
     </>
-  )
-}
+  );
+};
 
 export default App;
