@@ -99,14 +99,17 @@ export const PokemonsInformations = styled.div`
     padding: 24px;
     display: block;
     text-decoration: none;
-    margin-bottom: 5px;
 
     display: flex;
     align-items: center;
-    transition: background-color 0.3s;
+    transition: background-color transform 0.2s;
 
     &:hover {
-      background: ${shade(0.2, '#3d3d3d')};
+      transform: translateX(10px);
+    }
+
+    & + a {
+      margin-top: 16px;
     }
 
     img {
@@ -116,6 +119,7 @@ export const PokemonsInformations = styled.div`
 
     div {
       margin-left: 40px;
+      flex: 1;
 
       strong {
         font-size: 35px;

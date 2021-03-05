@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FiLoader } from 'react-icons/fi';
 import { BiX } from 'react-icons/bi';
 import { Link } from 'react-router-dom';
@@ -15,20 +15,20 @@ import {
 import api from '../../services/api';
 
 const Dashboard = () => {
-  const nameInputRef = useRef(null);
   const [pokemons, setPokemons] = useState([]);
-  const [pokemonsTypes, setPokemonsTypes] = useState([]);
+  // const [pokemonsTypes, setPokemonsTypes] = useState([]);
+  const [pokemonName, setPokemonName] = useState('');
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    async function getPokemonsTypes() {
-      const { data } = await api.get('type');
-      const { results } = data;
-      setPokemonsTypes(results);
-    }
-    getPokemonsTypes();
-  }, []);
+  // useEffect(() => {
+  //   async function getPokemonsTypes() {
+  //     const { data } = await api.get('type');
+  //     const { results } = data;
+  //     setPokemonsTypes(results);
+  //   }
+  //   getPokemonsTypes();
+  // }, []);
 
   const handleSearchPokemon = useCallback(
     async event => {
@@ -36,51 +36,53 @@ const Dashboard = () => {
       setLoading(true);
 
       const checkIfPokemonAlredyListed = pokemons.find(
-        pokemon => pokemon.name === nameInputRef.current?.value,
+        pokemon => pokemon.name === pokemonName,
       );
-
-      console.log(checkIfPokemonAlredyListed);
 
       if (!checkIfPokemonAlredyListed) {
         try {
           setError(false);
           const { data } = await api.get(
-            `pokemon/${nameInputRef.current?.value.toLowerCase()}`,
+            `pokemon/${pokemonName.toLowerCase()}`,
           );
           setPokemons([...pokemons, data]);
           setLoading(false);
         } catch (err) {
           setLoading(false);
           setError(true);
+        } finally {
+          setPokemonName('');
         }
       } else {
         setLoading(false);
       }
     },
-    [pokemons],
+    [pokemons, pokemonName],
   );
 
-  const SearchPokemonByType = useCallback(async typeName => {
-    console.log('ok');
-
-    // try {
-    //   setError(false);
-    //   const { data } = await api.get(`type/${typeName.toLowerCase()}`);
-    //   console.log(data);
-    //   const pokemonsFilteredByType = data.pokemon;
-    //   console.log(pokemonsFilteredByType);
-    //   // setPokemons(pokemonsFilteredByType);
-    // } catch (err) {
-    //   setError(true);
-    // }
-  }, []);
+  // const SearchPokemonByType = useCallback(async typeName => {
+  //   try {
+  //     setError(false);
+  //     const { data } = await api.get(`type/${typeName.toLowerCase()}`);
+  //     console.log(data);
+  //     const pokemonsFilteredByType = data.pokemon;
+  //     console.log(pokemonsFilteredByType);
+  //     // setPokemons(pokemonsFilteredByType);
+  //   } catch (err) {
+  //     setError(true);
+  //   }
+  // }, []);
 
   return (
     <Container>
       <img src={logoPokemon} alt="logo-pokemon" />
       <img src={personagemPokemon} alt="personagem" />
       <Form onSubmit={handleSearchPokemon}>
-        <input placeholder="Pesquise um Pokémon" ref={nameInputRef} />
+        <input
+          value={pokemonName}
+          placeholder="Pesquise um Pokémon"
+          onChange={e => setPokemonName(e.target.value)}
+        />
         <button type="submit">
           {loading ? <FiLoader size={32} /> : 'Pesquisar'}
         </button>
@@ -92,7 +94,7 @@ const Dashboard = () => {
         </Error>
       )}
 
-      <ContainerButtons>
+      {/* <ContainerButtons>
         {pokemonsTypes.map(({ name }) => {
           return (
             <Button key={name} onClick={() => SearchPokemonByType(name)}>
@@ -100,26 +102,24 @@ const Dashboard = () => {
             </Button>
           );
         })}
-      </ContainerButtons>
+      </ContainerButtons> */}
 
       <PokemonsInformations>
         {pokemons.map(pokemon => (
-          <>
-            <a href="/">
-              <img
-                src={pokemon.sprites.other['official-artwork'].front_default}
-                alt={pokemon.name}
-              />
-              <div>
-                <strong>{pokemon.name}</strong>
-                <p>{pokemon.types[0].type.name}</p>
-              </div>
+          <a key={pokemon.id} href="/">
+            <img
+              src={pokemon.sprites.other['official-artwork'].front_default}
+              alt={pokemon.name}
+            />
+            <div>
+              <strong>{pokemon.name}</strong>
+              <p>{pokemon.types[0].type.name}</p>
+            </div>
 
-              {/* <button type="button">
+            {/* <button type="button">
                 <BiX size={32} />
               </button> */}
-            </a>
-          </>
+          </a>
         ))}
       </PokemonsInformations>
     </Container>
