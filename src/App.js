@@ -1,13 +1,20 @@
 import React from 'react';
-import Dashboard from './pages/Dashboard';
+import { ToastContainer } from 'react-toastify';
+import { BrowserRouter as Router } from 'react-router-dom';
+import Routes from './routes/index';
 import GlobalStyle from './styles/global';
 
 const App = () => {
   return (
-    <>
+    <Router>
       <GlobalStyle />
-      <Dashboard />
-    </>
+      <ToastContainer
+        autoClose={3000}
+        pauseOnHover={false}
+        pauseOnFocusLoss={false}
+      />
+      <Routes />
+    </Router>
   );
 };
 
